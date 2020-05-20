@@ -6,8 +6,8 @@ let maze = [
 ];
 
 
-let MAX_ROW = maze.length - 1;
-let MAX_COL = maze[0].length - 1;
+let MAX_ROW = 2//maze.length - 1;
+let MAX_COL = 2//maze[0].length - 1;
 
 let isOrigin = (row, col) => {
   return row === 0 && col === 0;
@@ -34,7 +34,7 @@ let findPath = (row, col) => {
   factoryDP(row, col);
   return path;
 };
-
+ 
 
 // Find all path
 let findPathDFS = (row, col, path) => {
@@ -50,8 +50,36 @@ let findPathDFS = (row, col, path) => {
   }
 };
 
+
+let memorize = {};
+let findPathDFSWithMemo = (row, col) => {
+
+  if(row > MAX_ROW || col > MAX_COL || !maze[row][col]) return [];
+
+  if(memorize[`r${row}c${col}`]) return memorize[`r${row}c${col}`];
+
+  if(row === MAX_ROW && col === MAX_COL) return [[[row, col]]];
+
+  let paths1 = findPathDFSWithMemo(row+1, col);
+  let paths2 = findPathDFSWithMemo(row, col+1);
+
+  console.log(paths1);
+  // console.log({ paths1, paths2 });
+
+  let paths = paths1.concat(paths2);
+
+  if(!paths.length) return [[]];
+  paths.forEach(path => {
+      path.unshift([row, col]);
+  });
+  memorize[`r${row}c${col}`] = paths;
+  return paths;
+};
+
 // Find all paths
 // findPathDFS(3, 3, []);
 
 // Find one path and return
-console.log(findPath(3, 3));
+// console.log(findPath(3, 3));
+
+console.log(findPathDFSWithMemo(0, 0));
